@@ -3,6 +3,8 @@ STEPS FOR DEPLOYING THE APPLICATION ON AWS.
     • Execute the CloudFormation template that will create an EC2 instance and a RDS DB Server.
     • Template is present in the zip file (Mediawiki.yaml). 
     • Below is the architecture that will help us to deploy the Mediawiki application and create Mysql database running in a RDS server.
+    
+    ![alt text](https://github.com/dgruploads/Mediawiki/blob/master/Mediawiki+db.png?raw=true)
 
 
 
