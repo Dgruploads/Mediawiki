@@ -4,7 +4,7 @@ STEPS FOR DEPLOYING THE APPLICATION ON AWS.
     • Template is present in the zip file (Mediawiki.yaml). 
     • Below is the architecture that will help us to deploy the Mediawiki application and create Mysql database running in a RDS server.
     
-    ![alt text](https://github.com/dgruploads/Mediawiki/blob/master/Mediawiki%2Bdb.png?raw=true)
+    ![alt text](https://github.com/Dgruploads/Mediawiki/blob/master/Mediawiki%2Bdb.png?raw=true)
 
 
 
