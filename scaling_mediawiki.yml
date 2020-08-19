@@ -1,0 +1,109 @@
+---
+  AWSTemplateFormatVersion: "2010-09-09"
+  Description: "Create and auto scaling group."
+
+  Parameters:
+    KeyName:
+      Description: "Specify the key pair for the instance."
+      Type: AWS::EC2::KeyPair::KeyName
+      ConstraintDescription: "Must be a valid key pair name."
+
+    ImageId:
+      Description: "Specify the image AMI to use for the instance."
+      Type: "String"
+      Default: ami-098f16afa9edf40be
+      ConstraintDescription: "Must be a valid AMI."
+
+    InstanceType:
+      Description: "Specify the instance type for the instance."
+      Type: String
+      Default: t2.micro
+      ConstraintDescription: "Must be a valid instance type"
+
+    SecurityGroup:
+      Description: "Specify the security group to attach to the instance."
+      Type: List<AWS::EC2::SecurityGroup::Id>
+      ConstraintDescription: "Must be a valid security group ID."
+
+    ASGMaxSize:
+      Description: "Specify the maximum size for the ASG."
+      Type: String
+      Default: 5
+      ConstraintDescription: "Must be an integer"
+
+    ASGMinSize:
+      Description: "Specify the minimum size for the ASG."
+      Type: String
+      Default: 1
+      ConstraintDescription: "Must be an integer"      
+
+    DesiredCapacityASG:
+      Description: "Specify the desired size for the ASG."
+      Type: String
+      Default: 1
+      ConstraintDescription: "Must be an integer"            
+
+    Subnet:
+      Description: "Specify the subnet in which you want to launch the instance."
+      Type: AWS::EC2::Subnet::Id
+      ConstraintDescription: "Must be a valid Subnet."
+
+  Resources:
+    LaunchConfig:
+      Description: "Create a launch configuration for the ASG."
+      Type: AWS::AutoScaling::LaunchConfiguration
+      Properties:
+        KeyName: !Ref KeyName
+        ImageId: !Ref ImageId
+        SecurityGroups: !Ref SecurityGroup
+        InstanceType: !Ref InstanceType
+        LaunchConfigurationName: MediaWikiLaunchConfig
+
+    AutoScalingGroup:
+      Description: "Create an auto scaling group"
+      Type: AWS::AutoScaling::AutoScalingGroup
+      Properties:
+        AutoScalingGroupName: MediaWikiASG
+        DesiredCapacity: !Ref DesiredCapacityASG
+        LaunchConfigurationName: !Ref LaunchConfig
+        MaxSize: !Ref ASGMaxSize
+        MinSize: !Ref ASGMinSize
+        Tags:
+          - Key: Name
+            Value: ASG for Media Wiki
+        VPCZoneIdentifier: !Ref Subnet
+
+    ScaleUpPolicy:
+      Description: "Create a policy for scaling the instances."
+      Type: AWS::AutoScaling::ScalingPolicy
+      Properties:
+        AdjustmentType: ChangeInCapacity
+        AutoScalingGroupName: !Ref AutoScalingGroup
+        CoolDown: '1'
+        ScalingAdjustment: '1'
+
+    CPUAlarmHigh:
+      Description: "Specify a threshold and action for the scaling policy."
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        EvaluationPeriods: '1'
+        Statistic: Average
+        Threshold: '10'
+        AlarmDescription: "Alarm if CPU is too high or metric disappears indicating instance is down"
+        period: '60'
+        AlarmActions: !Ref ScaleUpPolicy
+        NameSpace: AWS/EC2
+        Dimenstions:
+          - Name: AutoScalingGroupName
+            Value: !Ref AutoScalingGroup
+        ComparisonOperator: GreaterThanThreshold
+        MetricName: CPUUtilization
+
+
+  Outputs:
+    AutoScalingGroup:
+      Description: "Newly created ASG"
+      Value: !Ref AutoScalingGroup
+    LaunchConfig:
+      Description: The newly created launch configuration
+      Value: !Ref LaunchConfig
