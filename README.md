@@ -1,3 +1,6 @@
+This repo will help you to setup Mediawiki on AWS using CloudFormation templates and shell scripts.
+You can follow the below steps to install Mediawiki on AWS.
+
 STEPS FOR DEPLOYING THE APPLICATION ON AWS.
 
     • Execute the CloudFormation template that will create an EC2 instance and a RDS DB Server.
@@ -46,10 +49,14 @@ Once the deployment is completed, we should be able to access the Mediawiki appl
     • Follow the steps on the screen. You will be asked to provide the DB details. DB endpoint will be available in the RDS console or we can get it from the EC2 server.
     • All the scripts are tested and they are working as expected.
 
+If you are looking to scale your application, you can follow the below steps.
+This is still work in progress. I will update the code once it is completed. Below is an overview of how to achieve the scaling in AWS.
 
 STEPS TO SCALE THE APPLICATION ON AWS.
 
     • To Scale the application on AWS, we can make use of Auto Scaling feature that will help us to launch or terminate the instances depending on the load on the server, like increased CPU utilization or decreased CPU utilization.
+   
+![alt text](https://raw.githubusercontent.com/Dgruploads/Mediawiki/master/autoscaling.png)
 
       
     • For this purpose we will create a launch configuration, which is the template for the servers that will be created by the auto scaling group.
